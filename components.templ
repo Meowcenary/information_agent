@@ -1,0 +1,15 @@
+package main
+
+import "time"
+
+templ timeComponent(d time.Time) {
+	<div>{ d.String() }</div>
+}
+
+templ derpComponent() {
+	<div>Derp Derp Derp</div>
+}
+
+templ notFoundComponent() {
+	<div>404 - Not found</div>
+}

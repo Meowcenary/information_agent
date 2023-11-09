@@ -1,31 +1,31 @@
 package main
 
 import (
-  // "fmt"
-  "html/template"
-  "log"
-  "net/http"
+	"net/http"
+	"time"
 )
 
-// type DataSource struct {
-//   BaseUrl string // E.g en.wikipedia.org/wiki/
-//   Params []string // E.g "Mediterranean_Sea"
-// }
+func NewNowHandler(now func() time.Time) NowHandler {
+	return NowHandler{Now: now}
+}
+
+type NowHandler struct {
+	Now func() time.Time
+}
+
+func (nh NowHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	timeComponent(nh.Now()).Render(r.Context(), w)
+}
+
+type DerpHandler struct {}
+
+func (dh DerpHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	derpComponent().Render(r.Context(), w)
+}
 
 func main() {
-  http.HandleFunc("/", handler)
-  http.HandleFunc("/submit", submitHandler)
-  log.Fatal(http.ListenAndServe(":8080", nil))
-}
+	http.Handle("/", NewNowHandler(time.Now))
+	http.Handle("/derp", DerpHandler{})
 
-// handler functions must have http.RepsonseWriter and *http.Request as function params
-func handler(w http.ResponseWriter, r *http.Request) {
-    t, _ := template.ParseFiles("root.html")
-    t.Execute(w, nil)
-}
-
-func submitHandler(w http.ResponseWriter, r *http.Request) {
-  // handle the query here
-  t, _ := template.ParseFiles("query_results.html")
-  t.Execute(w, nil)
+	http.ListenAndServe(":8080", nil)
 }
