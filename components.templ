@@ -1,15 +1,64 @@
 package main
 
-import "time"
+/* import "fmt" */
+/* import "time" */
 
-templ timeComponent(d time.Time) {
-	<div>{ d.String() }</div>
+/* templ layout(name string) { */
+/* 	<html> */
+/* 		<head><title>{ name }</title></head> */
+/* 		<body> */
+/* 			@headerTemplate(name) */
+/* 			@navTemplate() */
+/* 			<main> */
+/* 				{ children... } */
+/* 			</main> */
+/* 		</body> */
+/* 		@footerTemplate() */
+/* 	</html> */
+/* } */
+/*  */
+/* templ headerTemplate(name string) { */
+/* 	<header> */
+/* 		<h1>{ name }</h1> */
+/* 	</header> */
+/* } */
+/*  */
+/* templ footerTemplate() { */
+/* 	<footer> */
+/* 		<div>&copy; { fmt.Sprintf("%d", time.Now().Year()) }</div> */
+/* 	</footer> */
+/* } */
+
+css body() {
+	background-color: linen;
+	color: black;
 }
 
-templ derpComponent() {
-	<div>Derp Derp Derp</div>
+templ navTemplate() {
+	<nav id="navTemplate">
+		<ul>
+			<li><a href="/">Home</a></li>
+			<li><a href="/topics">Topics</a></li>
+		</ul>
+	</nav>
 }
 
-templ notFoundComponent() {
-	<div>404 - Not found</div>
+templ home(topics []Topic) {
+	<html>
+		<body class={ body() }>
+			<div>
+				<h1>Topic Selection</h1>
+				<p>To view more information on a specific topic, click on one of the links below</p>
+				@topicList(topics)
+			</div>
+		</body>
+	</html>
+}
+
+templ topicList(topics []Topic) {
+	<ul>
+	for _, topic := range topics {
+		<li>{ topic.Name }</li>
+	}
+	</ul>
 }
