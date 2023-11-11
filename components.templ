@@ -1,7 +1,8 @@
 package main
 
-/* import "fmt" */
-/* import "time" */
+import "fmt"
+import "time"
+import "github.com/Meowcenary/information_agent/scraper"
 
 /* templ layout(name string) { */
 /* 	<html> */
@@ -17,17 +18,20 @@ package main
 /* 	</html> */
 /* } */
 /*  */
-/* templ headerTemplate(name string) { */
-/* 	<header> */
-/* 		<h1>{ name }</h1> */
-/* 	</header> */
-/* } */
-/*  */
-/* templ footerTemplate() { */
-/* 	<footer> */
-/* 		<div>&copy; { fmt.Sprintf("%d", time.Now().Year()) }</div> */
-/* 	</footer> */
-/* } */
+
+templ headerTemplate() {
+  <head>
+    <meta charset="UTF-8" />
+    /* <meta name="viewport" content="width=device-width" /> */
+    <title>Information Agent</title>
+  </head>
+}
+
+templ footerTemplate() {
+	<footer>
+		<div>Information Agent Prototype &copy; { fmt.Sprintf("%d", time.Now().Year()) }</div>
+	</footer>
+}
 
 css body() {
 	background-color: linen;
@@ -38,27 +42,38 @@ templ navTemplate() {
 	<nav id="navTemplate">
 		<ul>
 			<li><a href="/">Home</a></li>
-			<li><a href="/topics">Topics</a></li>
+			<li><a href="/page">Topics</a></li>
 		</ul>
 	</nav>
 }
 
-templ home(topics []Topic) {
+templ home(pages []scraper.WikiPage) {
 	<html>
+		@headerTemplate()
 		<body class={ body() }>
 			<div>
 				<h1>Topic Selection</h1>
-				<p>To view more information on a specific topic, click on one of the links below</p>
-				@topicList(topics)
+				<p>To view more information on a specific page, click on one of the links below</p>
+				@pageList(pages)
 			</div>
+			<hr></hr>
+			@footerTemplate()
 		</body>
 	</html>
 }
 
-templ topicList(topics []Topic) {
+templ pageList(pages []scraper.WikiPage) {
 	<ul>
-	for _, topic := range topics {
-		<li>{ topic.Name }</li>
+	for _, page := range pages {
+		<li><a href={ templ.URL("wiki_page_json/" + page.Title) }>{ page.Title }</a></li>
 	}
 	</ul>
+}
+
+templ page(page scraper.WikiPage) {
+	<html>
+		<body>
+			<h1>{ page.Title }</h1>
+		</body>
+	</html>
 }

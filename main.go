@@ -5,13 +5,15 @@ import (
 	"net/http"
 
 	"github.com/a-h/templ"
+	"github.com/Meowcenary/information_agent/scraper"
 )
 
 func main() {
 	log.Println("starting...")
+
 	// Http handlers
 	http.Handle("/", NewHomeHandler())
-	http.Handle("/topics", NewTopicsHandler())
+	http.Handle("/wiki_page_json/", NewPagesHandler())
 
 	// Start the server.
 	log.Println("listening on http://localhost:8000")
@@ -20,13 +22,17 @@ func main() {
 	}
 }
 
-func getTopics() ([]Topic, error) {
-	topics := []Topic{
-		Topic{Name: "Test Topic", Body: "test body"},
-		Topic{Name: "Test Topic 2", Body: "another test body"},
-	}
+// This is effectively an index of pages
+func getPages(dirPath string) ([]scraper.WikiPage, error) {
+	wikiPages, err := scraper.ReadWikiPagesFromDirectory(dirPath)
 
-	return topics, nil
+	return wikiPages, err
+}
+
+func getPage(filepath string) (scraper.WikiPage, error) {
+	wikiPage, err := scraper.ReadWikiPageJson(filepath)
+
+	return *wikiPage, err
 }
 
 // Home Handler
@@ -41,45 +47,40 @@ type HomeHandler struct {
 }
 
 func (hh HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	topics, err := getTopics()
+	pages, err := getPages("wiki_page_json")
 
 	if err != nil {
-		hh.Log.Printf("failed to get posts: %v", err)
-		http.Error(w, "failed to retrieve posts", http.StatusInternalServerError)
+		hh.Log.Println("failed to get pages: %v", err)
 		return
 	}
 
 	hh.Log.Println("rendering home")
-	templ.Handler(home(topics)).ServeHTTP(w, r)
+	templ.Handler(home(pages)).ServeHTTP(w, r)
 }
 
-// Topics Handler
-func NewTopicsHandler() TopicsHandler {
-	return TopicsHandler {
-		GetTopics: getTopics,
+func NewPagesHandler() PagesHandler {
+	return PagesHandler {
 		Log: log.Default(),
 	}
 }
 
-type TopicsHandler struct {
-	GetTopics func() ([]Topic, error)
+type PagesHandler struct {
 	Log *log.Logger
 }
 
-func (th TopicsHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	topics, err := getTopics()
+func (ph PagesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	path := r.URL.Path
+	ph.Log.Println(path)
+	filepath := scraper.FilenameFromTitle(r.URL.Path[1:])
+	log.Println("Retrieving page from filepath: ", filepath)
+	wikipage, err := getPage(filepath)
 
 	if err != nil {
-		th.Log.Printf("failed to get topics: %v", err)
-		http.Error(w, "failed to retrieve topics", http.StatusInternalServerError)
+		ph.Log.Printf("failed to get page: %v", err)
+		http.Error(w, "failed to retrieve pages", http.StatusInternalServerError)
 		return
 	}
 
-	th.Log.Println("rendering home")
-	templ.Handler(home(topics)).ServeHTTP(w, r)
-}
-
-type Topic struct {
-	Name string
-	Body string
+	ph.Log.Println("rendering pages")
+	templ.Handler(page(wikipage)).ServeHTTP(w, r)
 }
