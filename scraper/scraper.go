@@ -30,6 +30,7 @@ func NewWikiPage(url string) *WikiPage {
 		Tags: []string{},
 	}
 }
+
 // Struct to hold scraped data
 type WikiPage struct {
 	Url string `json:"url"`
@@ -182,3 +183,34 @@ func ScrapeWikiUrls(urls []string) []WikiPage {
 
 	return pages
 }
+
+type WikiQueryResult struct {
+	Url string `json:"url"`
+	Title string `json:"title"`
+}
+
+// Search wikiepdia for query and return results as map of page title to page url
+// Only works for one word query currently (lol)
+func SearchWikipedia(query string) []WikiQueryResult {
+	// Colly
+	wikiSearchCollector := colly.NewCollector()
+	wikiSearchCollector.OnRequest(func(r *colly.Request) {
+		fmt.Println("Visiting", r.URL)
+	})
+
+	var queryResults []WikiQueryResult
+	// If the query matches with a wikipedia page title it will go directly
+	// to the page instead of listing the results of the search
+	wikiSearchCollector.OnHTML(".mw-search-result-heading", func(e *colly.HTMLElement) {
+		queryResult := WikiQueryResult{
+			Url: "https://en.wikipedia.org/" + e.ChildAttr("a", "href"),
+			Title: e.ChildAttr("a", "title"),
+		}
+		queryResults = append(queryResults, queryResult)
+	})
+
+	wikiSearchCollector.Visit("https://en.wikipedia.org/wiki/Special:Search?search=" + query)
+	return queryResults
+}
+
+

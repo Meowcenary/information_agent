@@ -33,23 +33,100 @@ templ headerTemplate() {
 }
 
 templ footerTemplate() {
+	<hr></hr>
 	<footer>
 		<div>Applied Statistics Method Reference &copy; { fmt.Sprintf("%d", time.Now().Year()) }</div>
 	</footer>
+}
+
+templ navTemplate() {
+	<font size="5">
+		<a class={ standardA() } href="/home">-> Home</a>
+		/
+		<a class={ standardA() } href="/search">-> Search</a>
+		/
+		<a class={ standardA() } href="/about">-> About</a>
+	</font>
+	<hr></hr>
+	<h1>Applied Statistics Method Reference</h1>
+	<hr></hr>
 }
 
 templ home(pages []scraper.WikiPage) {
 	<html>
 		@headerTemplate()
 		<body class={ body() }>
-			<h1>Applied Statistics Method Reference</h1>
-			<hr></hr>
+			@navTemplate()
 			<div>
 				<h2>Topic Selection</h2>
 				<p>To view more information on a specific topic click on one of the links below</p>
 				@pageList(pages)
 			</div>
-			<hr></hr>
+			@footerTemplate()
+		</body>
+	</html>
+}
+
+templ about() {
+	<html>
+		@headerTemplate()
+		<body class={ body() }>
+			@navTemplate()
+			<div>
+				<h2>About</h2>
+				<p>WIP</p>
+			</div>
+			@footerTemplate()
+		</body>
+	</html>
+}
+
+templ search() {
+	<html>
+		@headerTemplate()
+		<body class={ body() }>
+			@navTemplate()
+			<div>
+				<h2>Wikipedia Passthrough Search</h2>
+				<p>Enter your search query below</p>
+				<form action="/search" method="POST">
+					<div>
+						<input type="text" id="search" name="search" value="Query"></input>
+						<button type="submit">Search</button>
+					</div>
+				</form>
+			</div>
+			@footerTemplate()
+		</body>
+	</html>
+}
+
+templ searchResults(query string, results []scraper.WikiQueryResult) {
+	<html>
+		@headerTemplate()
+		<body class={ body() }>
+			@navTemplate()
+			<div>
+				<h2>Search Results For: { query }</h2>
+					if len(results) > 0 {
+						<ul>
+							for _, result := range results {
+								<li class={ standardLi() }>
+									<span>{ result.Title }</span>
+									<br></br>
+									<a href={ templ.URL(result.Url) } target="_blank">
+										<button>View Article</button>
+									</a>
+									<a href={ templ.URL("/scrape_wikipedia?url=" + result.Url) }>
+										<button>Add to Reference</button>
+									</a>
+								</li>
+						}
+					</ul>
+				} else {
+					<p>No results to display</p>
+				}
+			</div>
 			@footerTemplate()
 		</body>
 	</html>
@@ -57,9 +134,13 @@ templ home(pages []scraper.WikiPage) {
 
 templ pageList(pages []scraper.WikiPage) {
 	<ul class={ standardUl() }>
-	for _, page := range pages[1:] {
-		<li class={ standardLi() }><a class={ standardA() } href={ templ.URL("wiki_page_json/" + page.Title) }>-> { page.Title }</a></li>
-	}
+		for _, page := range pages[1:] {
+			<li class={ standardLi() }>
+				<a class={ standardA() } href={ templ.URL("wiki_page_json/" + page.Title) }>
+					-> { page.Title }
+				</a>
+			</li>
+		}
 	</ul>
 }
 
@@ -67,10 +148,8 @@ templ page(content templ.Component) {
 	<html>
 		@headerTemplate()
 		<body class={ body() }>
-			<a class={ standardA() } href="/"><font size="5">-> Home</font></a>
-			<hr></hr>
+			@navTemplate()
 			{! content }
-			<hr></hr>
 			@footerTemplate()
 		</body>
 	</html>
