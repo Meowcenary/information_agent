@@ -9,12 +9,7 @@ import (
 // Scrape wikipedia urls and store result into
 // json files to be used by the web app
 func main() {
-	urls := []string{
-		"https://en.wikipedia.org/wiki/Bootstrapping_(statistics)",
-		"https://en.wikipedia.org/wiki/Cross-validation_(statistics)",
-		"https://en.wikipedia.org/wiki/Sampling_(statistics)",
-		"https://en.wikipedia.org/wiki/Resampling_(statistics)",
-	}
+	urls, _ := scraper.ReadUrlsFromTextFile("urls.txt")
 	dataDir := "wiki_page_json"
 	pages := scraper.ScrapeWikiUrls(urls)
 	log.Printf("Done scraping, writing to files")

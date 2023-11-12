@@ -1,8 +1,10 @@
 package scraper
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -35,6 +37,26 @@ type WikiPage struct {
 	Text string `json:"text"`
 	Tags []string `json:"tags"`
 	Paragraphs []WikiPageParagraph `json:"paragraphs"`
+}
+
+func ReadUrlsFromTextFile(filePath string) ([]string, error) {
+	// Open the text file.
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	// Create a buffered reader.
+	reader := bufio.NewReader(file)
+
+	// Read the lines from the text file into a slice of strings.
+	lines := []string{}
+	for line, err := reader.ReadString('\n'); err != io.EOF; line, err = reader.ReadString('\n') {
+		lines = append(lines, line[:len(line)-1])
+	}
+
+	return lines, nil
 }
 
 func FilenameFromTitle(title string) string {
