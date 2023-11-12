@@ -70,10 +70,10 @@ templ pageList(pages []scraper.WikiPage) {
 	</ul>
 }
 
-templ page(page scraper.WikiPage) {
+templ page(content templ.Component) {
 	<html>
 		<body>
-			<h1>{ page.Title }</h1>
+			{! content }
 		</body>
 	</html>
 }

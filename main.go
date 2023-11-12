@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+	"io"
 	"log"
 	"net/http"
 
@@ -81,6 +83,23 @@ func (ph PagesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	html := "<html><body><h1>" + wikipage.Title + "</h1>"
+	for _, paragraph := range wikipage.Paragraphs {
+		html += paragraph.Text
+	}
+	html += "</body></html>"
+	// Create an unsafe component containing raw HTML.
+	content := Unsafe(html)
+
 	ph.Log.Println("rendering pages")
-	templ.Handler(page(wikipage)).ServeHTTP(w, r)
+	templ.Handler(page(content)).ServeHTTP(w, r)
 }
+
+func Unsafe(html string) templ.Component {
+	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) (err error) {
+		_, err = io.WriteString(w, html)
+		return
+	})
+}
+
+
