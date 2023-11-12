@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"regexp"
 
 	"github.com/a-h/templ"
 	"github.com/Meowcenary/information_agent/scraper"
@@ -83,16 +84,39 @@ func (ph PagesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Create an html string to render
+	html := FormatPageHtml(wikipage)
+	html = RemoveScriptTags(html)
+	html = RemoveAnchorTags(html)
+	// Create an unsafe component containing raw HTML.
+	content := Unsafe(html)
+	ph.Log.Println("rendering pages")
+	templ.Handler(page(content)).ServeHTTP(w, r)
+}
+
+// Page Component Building
+
+func FormatPageHtml(wikipage scraper.WikiPage) string {
 	html := "<html><body><h1>" + wikipage.Title + "</h1>"
 	for _, paragraph := range wikipage.Paragraphs {
 		html += "<p>" + paragraph.Text + "</p>"
 	}
 	html += "</body></html>"
-	// Create an unsafe component containing raw HTML.
-	content := Unsafe(html)
+	return html
+}
 
-	ph.Log.Println("rendering pages")
-	templ.Handler(page(content)).ServeHTTP(w, r)
+// RemoveScriptTags removes script tags and their content from an HTML formatted string
+func RemoveScriptTags(html string) string {
+	scriptTagRegex := regexp.MustCompile(`<script(.*?)>(.*?)</script>`)
+	html = scriptTagRegex.ReplaceAllString(html, "")
+	return html
+}
+
+// RemoveAnchorTags removes anchor tags from an HTML formatted string but keeps the link text
+func RemoveAnchorTags(html string) string {
+	anchorTagRegex := regexp.MustCompile(`<a(.*?)>(.*?)</a>`)
+	html = anchorTagRegex.ReplaceAllString(html, "$2")
+	return html
 }
 
 func Unsafe(html string) templ.Component {
@@ -101,5 +125,3 @@ func Unsafe(html string) templ.Component {
 		return
 	})
 }
-
-

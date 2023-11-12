@@ -4,20 +4,25 @@ import "fmt"
 import "time"
 import "github.com/Meowcenary/information_agent/scraper"
 
-/* templ layout(name string) { */
-/* 	<html> */
-/* 		<head><title>{ name }</title></head> */
-/* 		<body> */
-/* 			@headerTemplate(name) */
-/* 			@navTemplate() */
-/* 			<main> */
-/* 				{ children... } */
-/* 			</main> */
-/* 		</body> */
-/* 		@footerTemplate() */
-/* 	</html> */
-/* } */
-/*  */
+css body() {
+	background-color: linen;
+	color: black;
+	font-family: system-ui;
+}
+
+css standardA() {
+	color: #000;
+	text-decoration: none;
+}
+
+css standardLi() {
+	margin-bottom: 10px;
+}
+
+css standardUl() {
+	list-style-type: none;
+	padding: 0;
+}
 
 templ headerTemplate() {
   <head>
@@ -33,27 +38,15 @@ templ footerTemplate() {
 	</footer>
 }
 
-css body() {
-	background-color: linen;
-	color: black;
-}
-
-templ navTemplate() {
-	<nav id="navTemplate">
-		<ul>
-			<li><a href="/">Home</a></li>
-			<li><a href="/page">Topics</a></li>
-		</ul>
-	</nav>
-}
-
 templ home(pages []scraper.WikiPage) {
 	<html>
 		@headerTemplate()
 		<body class={ body() }>
+			<h1>Applied Statistics Method Reference</h1>
+			<hr></hr>
 			<div>
-				<h1>Topic Selection</h1>
-				<p>To view more information on a specific page, click on one of the links below</p>
+				<h2>Topic Selection</h2>
+				<p>To view more information on a specific topic click on one of the links below</p>
 				@pageList(pages)
 			</div>
 			<hr></hr>
@@ -63,9 +56,9 @@ templ home(pages []scraper.WikiPage) {
 }
 
 templ pageList(pages []scraper.WikiPage) {
-	<ul>
+	<ul class={ standardUl() }>
 	for _, page := range pages[1:] {
-		<li><a href={ templ.URL("wiki_page_json/" + page.Title) }>{ page.Title }</a></li>
+		<li class={ standardLi() }><a class={ standardA() } href={ templ.URL("wiki_page_json/" + page.Title) }>-> { page.Title }</a></li>
 	}
 	</ul>
 }
@@ -74,6 +67,7 @@ templ page(content templ.Component) {
 	<html>
 		@headerTemplate()
 		<body class={ body() }>
+			<a class={ standardA() } href="/"><font size="5">Home</font></a>
 			{! content }
 			<hr></hr>
 			@footerTemplate()
