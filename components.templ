@@ -13,6 +13,7 @@ css body() {
 css standardA() {
 	color: #000;
 	text-decoration: none;
+	font-size: x-large;
 }
 
 css standardLi() {
@@ -22,6 +23,45 @@ css standardLi() {
 css standardUl() {
 	list-style-type: none;
 	padding: 0;
+}
+
+css standardButton() {
+  border-radius: 5px;
+  background: #0066cc;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+	margin-bottom: 1rem;
+}
+
+css searchInput() {
+	border: 1px solid #ccc;
+	border-radius: 5px;
+	background-color: #eee;
+	font-size: 16px;
+	padding: 10px;
+	width: 25%;
+}
+
+css text() {
+	text-align: left;
+	width: 20%;
+	padding-bottom: 1rem;
+	font-size: x-large;
+	border-bottom: 1px solid #ccc;
+}
+
+css searchResultLi() {
+	display: flex;
+	align-items: center;
+	margin: 1rem;
+}
+
+css searchResultsUl() {
+  list-style: none;
+  padding: 0;
 }
 
 templ headerTemplate() {
@@ -91,8 +131,8 @@ templ search() {
 				<p>Enter your search query below</p>
 				<form action="/search" method="POST">
 					<div>
-						<input type="text" id="search" name="search" value="Query"></input>
-						<button type="submit">Search</button>
+						<input class={ searchInput() } type="text" id="search" name="search" value="Query"></input>
+						<button class={ standardButton() } type="submit">Search</button>
 					</div>
 				</form>
 			</div>
@@ -107,18 +147,26 @@ templ searchResults(query string, results []scraper.WikiQueryResult) {
 		<body class={ body() }>
 			@navTemplate()
 			<div>
-				<h2>Search Results For: { query }</h2>
+				<h2>Search Results</h2>
+					<div>
+						<p>Enter your search query below</p>
+						<form action="/search" method="POST">
+							<div>
+								<input class={ searchInput() } type="text" id="search" name="search" value={ query }></input>
+								<button class={ standardButton() } type="submit">Search</button>
+							</div>
+						</form>
+					</div>
 					if len(results) > 0 {
-						<ul>
+						<ul class={ searchResultsUl() }>
 							for _, result := range results {
-								<li class={ standardLi() }>
-									<span>{ result.Title }</span>
-									<br></br>
+								<li class={ searchResultLi() }>
+									<span class={ text() }>-> { result.Title }</span>
 									<a href={ templ.URL(result.Url) } target="_blank">
-										<button>View Article</button>
+										<button class={ standardButton() }>View Article On Wikipedia</button>
 									</a>
 									<a href={ templ.URL("/scrape_wikipedia?url=" + result.Url) }>
-										<button>Add to Reference</button>
+										<button class={ standardButton() }>Add to Reference</button>
 									</a>
 								</li>
 						}
@@ -135,9 +183,10 @@ templ searchResults(query string, results []scraper.WikiQueryResult) {
 templ pageList(pages []scraper.WikiPage) {
 	<ul class={ standardUl() }>
 		for _, page := range pages[1:] {
-			<li class={ standardLi() }>
+			<li class={ searchResultLi() }>
+				<span class={ text() }>-> { page.Title }</span>
 				<a class={ standardA() } href={ templ.URL("wiki_page_json/" + page.Title) }>
-					-> { page.Title }
+					<button class={ standardButton() }>View Topic</button>
 				</a>
 			</li>
 		}
