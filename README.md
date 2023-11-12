@@ -4,7 +4,7 @@ statistics.
 
 ### Installing the App
 The app can be installed with git: `git clone git@github.com:Meowcenary/information_agent.git` or
-`https://github.com/Meowcenary/information_agent.git`.
+`git clone https://github.com/Meowcenary/information_agent.git`.
 
 ### Running the Web Scraper
 From the root directory: `make scrape_wiki_pages` will scrape the URLs specified in the new line delimited file
@@ -15,6 +15,19 @@ on Wikipedia.
 From the root directory: `make run`. Once the server has started navigate to `http:/localhost:8000/home`. The app
 supports viewing wiki pages, searching wikipedia, and local file CRUD operations. It is recommended to run the scraper
 before running the web app to seed the content.
+
+### Demo Workflow
+From the root directory run:
+```
+make scrape_wiki_pages
+make run
+```
+
+Once the server is running navigate to http:/localhost:8000/home to see the list of scraped pages. Click "View Topic" to
+view the scraped data formatted for local viewing. Click "Delete Topic" to remove a page from the system. On the top nav
+bar click "Search" and run a simple search for: "Statz" to see a list of articles that could be scraped from Wikipedia.
+The button "View Article on Wikipedia" will open a new tab to the article on Wikipedia and the button "Add to Reference"
+will scrape the page and add the link to the home page list.
 
 ### Running the Tests
 To run the full test suite, from the root directory: `make test`

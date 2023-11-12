@@ -90,9 +90,29 @@ css homeDescriptor() {
 	margin-bottom: 2rem;
 }
 
+css flashSuccess() {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+	background-color: green;
+	padding: 0.5rem;
+	max-width: 25%;
+	font-size: large;
+}
+
+css closeFlash() {
+	float: right;
+  font-size: 16px;
+  line-height: 16px;
+  padding: 0 5px;
+  cursor: pointer;
+}
+
 templ headerTemplate() {
   <head>
     <meta charset="UTF-8" />
+		/* <meta https-equiv="Content-Security-Policy" content="default-src *;" /> */
     /* <meta name="viewport" content="width=device-width" /> */
     <title>Applied Statistics Method Reference</title>
   </head>
@@ -102,6 +122,21 @@ templ footerTemplate() {
 	<hr></hr>
 	<footer>
 		<div>Applied Statistics Method Reference &copy; { fmt.Sprintf("%d", time.Now().Year()) }</div>
+		<script>
+			function hideFlash(buttonId, elementId) {
+				// Get the button and element elements
+				const button = document.getElementById(buttonId);
+				const element = document.getElementById(elementId);
+
+				// Add a click event listener to the button
+				button.addEventListener('click', function() {
+					// Hide the element
+					element.style.display = 'none';
+				});
+			}
+
+			hideFlash("close-flash", "flash")
+		</script>
 	</footer>
 }
 
@@ -118,11 +153,21 @@ templ navTemplate() {
 	<hr></hr>
 }
 
-templ home(pages []scraper.WikiPage) {
+templ flashMessageTemplate(flashMessage *Flash) {
+	if flashMessage != nil && flashMessage.Type == "success" {
+		<div id="flash" class={ flashSuccess() }>
+			<span>{ flashMessage.Message }</span>
+			<button type="button" id="close-flash" class={ closeFlash() }>x</button>
+		</div>
+	}
+}
+
+templ home(pages []scraper.WikiPage, flashMessage *Flash) {
 	<html>
 		@headerTemplate()
 		<body class={ body() }>
 			@navTemplate()
+			@flashMessageTemplate(flashMessage)
 			<div>
 				<h2>Topic Selection</h2>
 				<p class={ homeDescriptor() }>To view more information on a specific topic click on one of the links below</p>

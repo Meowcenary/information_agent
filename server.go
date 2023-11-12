@@ -12,6 +12,19 @@ import (
 	"github.com/Meowcenary/information_agent/scraper"
 )
 
+type Flash struct {
+	Message string;
+	Type string;
+}
+var GlobalFlash *Flash
+
+func NewFlashMessage(message, flashType string) *Flash {
+	return &Flash {
+		Message: message,
+		Type: flashType,
+	}
+}
+
 func main() {
 	log.Println("starting...")
 
@@ -71,7 +84,7 @@ func (hh HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	hh.Log.Println("rendering home")
-	templ.Handler(home(pages)).ServeHTTP(w, r)
+	templ.Handler(home(pages, GlobalFlash)).ServeHTTP(w, r)
 }
 
 // Scrape Wikipedia Handler
@@ -90,11 +103,13 @@ func (swh ScrapeWikipediaHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 	swh.Log.Println("scraping url: ", url)
 	page := scraper.ScrapeWikiUrls([]string{url})[0]
 	filepath := "wiki_page_json" + "/" + page.FilenameFromTitle()
-	log.Println("Writing to", filepath)
+	log.Println("writing to", filepath)
 	scraper.WriteWikiPageJson(filepath, page)
 	pages, _ := getPages("wiki_page_json")
 	// Render Home
-	templ.Handler(home(pages)).ServeHTTP(w, r)
+	log.Println("setting flash")
+	flashMessage := NewFlashMessage("Successfully added " + page.Title + " to system", "success")
+	templ.Handler(home(pages, flashMessage)).ServeHTTP(w, r)
 }
 
 // Search Handler
@@ -212,6 +227,8 @@ func (dwph DeleteWikiPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Reque
 	}
 
 	dwph.Log.Println("deleting page from filepath: ", filepath)
+	log.Println("setting flash")
+	GlobalFlash = NewFlashMessage("Successfully deleted " + title + " from system", "success")
 	http.Redirect(w, r, "/home", 302)
 }
 
