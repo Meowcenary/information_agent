@@ -1,0 +1,7 @@
+https://en.wikipedia.org/wiki/Bootstrapping_(statistics)
+https://en.wikipedia.org/wiki/Cross-validation_(statistics)
+https://en.wikipedia.org/wiki/Sampling_(statistics)
+https://en.wikipedia.org/wiki/Resampling_(statistics)
+https://en.wikipedia.org/wiki/Data_model
+https://en.wikipedia.org/wiki/Data_modeling
+https://en.wikipedia.org/wiki/Data_engineering
