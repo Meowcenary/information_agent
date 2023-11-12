@@ -2,13 +2,24 @@
 Prototype information agent web application written in Go. This specific instance is configured with a focus on applied
 statistics.
 
+### Installing the App
+The app can be installed with git: `git clone git@github.com:Meowcenary/information_agent.git` or
+`https://github.com/Meowcenary/information_agent.git`.
+
 ### Running the Web Scraper
-From the root directory run: `go run run_scraper.go`. To update the page that are scraped edit the new line delmited
-file `urls.txt`.
+From the root directory: `make scrape_wiki_pages` will scrape the URLs specified in the new line delimited file
+`urls.txt`. The default URLs are set with a focus on data science topics, but this can be edited to scrape other pages
+on Wikipedia.
 
 ### Running the Web App
-From the root directory run: `go run main.go component_templ.go`. Once the server is running open a web browser and
-navigate to "http://localhost:8000".
+From the root directory: `make run`. Once the server has started navigate to `http:/localhost:8000/home`. The app
+supports viewing wiki pages, searching wikipedia, and local file CRUD operations. It is recommended to run the scraper
+before running the web app to seed the content.
+
+### Running the Tests
+To run the full test suite, from the root directory: `make test`
+
+The tests for the scraper package can be run on their own with: `go test ./`
 
 ### Updating Views
 This project uses the Go package "templ" to build it's views. Most of the view code is in `components.templ`, but it is
