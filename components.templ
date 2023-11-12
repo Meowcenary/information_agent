@@ -64,7 +64,7 @@ templ home(pages []scraper.WikiPage) {
 
 templ pageList(pages []scraper.WikiPage) {
 	<ul>
-	for _, page := range pages {
+	for _, page := range pages[1:] {
 		<li><a href={ templ.URL("wiki_page_json/" + page.Title) }>{ page.Title }</a></li>
 	}
 	</ul>
@@ -72,8 +72,11 @@ templ pageList(pages []scraper.WikiPage) {
 
 templ page(content templ.Component) {
 	<html>
-		<body>
+		@headerTemplate()
+		<body class={ body() }>
 			{! content }
+			<hr></hr>
+			@footerTemplate()
 		</body>
 	</html>
 }

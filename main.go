@@ -85,7 +85,7 @@ func (ph PagesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	html := "<html><body><h1>" + wikipage.Title + "</h1>"
 	for _, paragraph := range wikipage.Paragraphs {
-		html += paragraph.Text
+		html += "<p>" + paragraph.Text + "</p>"
 	}
 	html += "</body></html>"
 	// Create an unsafe component containing raw HTML.
