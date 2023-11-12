@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strings"
 
 	"github.com/a-h/templ"
 	"github.com/Meowcenary/information_agent/scraper"
@@ -20,9 +21,11 @@ func main() {
 	http.Handle("/search", NewSearchHandler())
 	http.Handle("/about", NewAboutHandler())
 	http.Handle("/scrape_wikipedia", NewScrapeWikipediaHandler())
+	http.Handle("/delete_wiki_page/", NewDeleteWikiPageHandler())
 
 	// Start the server.
 	log.Println("listening on http://localhost:8000")
+	log.Println("home page: http:/localhost:8000/home")
 	if err := http.ListenAndServe("localhost:8000", nil); err != nil {
 		log.Printf("error listening: %v", err)
 	}
@@ -40,6 +43,10 @@ func getPage(filepath string) (scraper.WikiPage, error) {
 	wikiPage, err := scraper.ReadWikiPageJson(filepath)
 
 	return *wikiPage, err
+}
+
+func deletePage(filepath string) error {
+	return scraper.DeleteWikiPageJson(filepath)
 }
 
 // Home Handler
@@ -160,8 +167,6 @@ type PagesHandler struct {
 }
 
 func (ph PagesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	path := r.URL.Path
-	ph.Log.Println(path)
 	filepath := scraper.FilenameFromTitle(r.URL.Path[1:])
 	log.Println("retrieving page from filepath: ", filepath)
 	wikipage, err := getPage(filepath)
@@ -182,6 +187,32 @@ func (ph PagesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	ph.Log.Println("rendering pages")
 	templ.Handler(page(content)).ServeHTTP(w, r)
+}
+
+// Delete Wiki Page Handler
+
+func NewDeleteWikiPageHandler() DeleteWikiPageHandler {
+	return DeleteWikiPageHandler {
+		Log: log.Default(),
+	}
+}
+
+type DeleteWikiPageHandler struct {
+	Log *log.Logger;
+}
+
+func (dwph DeleteWikiPageHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	dwph.Log.Println("delete called")
+	title := strings.Split(r.URL.Path[1:], "/")[1]
+	filepath := scraper.FilenameFromTitle(title)
+	err := deletePage("wiki_page_json/" + filepath)
+
+	if err != nil {
+		dwph.Log.Panic(err)
+	}
+
+	dwph.Log.Println("deleting page from filepath: ", filepath)
+	http.Redirect(w, r, "/home", 302)
 }
 
 // Page Component Building

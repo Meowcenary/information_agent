@@ -76,6 +76,11 @@ func (wp WikiPage) FilenameFromTitle() string {
 	return title + ".json"
 }
 
+func DeleteWikiPageJson(filepath string) (error) {
+	err := os.Remove(filepath)
+	return err
+}
+
 // Read json created from scraper
 // Returns pointer to WikiPage because using a WikiPage struct directly does not allow for a nil
 // return. See here: https://stackoverflow.com/questions/50697914/return-nil-for-a-struct-in-go

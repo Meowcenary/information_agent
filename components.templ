@@ -16,10 +16,6 @@ css standardA() {
 	font-size: x-large;
 }
 
-css standardLi() {
-	margin-bottom: 10px;
-}
-
 css standardUl() {
 	list-style-type: none;
 	padding: 0;
@@ -33,6 +29,31 @@ css standardButton() {
   padding: 10px 20px;
   cursor: pointer;
   transition: background-color 0.2s ease-in-out;
+	margin-left: 0.3rem;
+	margin-bottom: 1rem;
+}
+
+css addReferenceButton() {
+  border-radius: 5px;
+  background: #32e00b;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+	margin-left: 0.3rem;
+	margin-bottom: 1rem;
+}
+
+css deleteButton() {
+  border-radius: 5px;
+  background: #f20736;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+	margin-left: 0.3rem;
 	margin-bottom: 1rem;
 }
 
@@ -53,7 +74,7 @@ css text() {
 	border-bottom: 1px solid #ccc;
 }
 
-css searchResultLi() {
+css standardLi() {
 	display: flex;
 	align-items: center;
 	margin: 1rem;
@@ -62,6 +83,11 @@ css searchResultLi() {
 css searchResultsUl() {
   list-style: none;
   padding: 0;
+}
+
+css homeDescriptor() {
+	font-size: large;
+	margin-bottom: 2rem;
 }
 
 templ headerTemplate() {
@@ -99,7 +125,7 @@ templ home(pages []scraper.WikiPage) {
 			@navTemplate()
 			<div>
 				<h2>Topic Selection</h2>
-				<p>To view more information on a specific topic click on one of the links below</p>
+				<p class={ homeDescriptor() }>To view more information on a specific topic click on one of the links below</p>
 				@pageList(pages)
 			</div>
 			@footerTemplate()
@@ -160,13 +186,13 @@ templ searchResults(query string, results []scraper.WikiQueryResult) {
 					if len(results) > 0 {
 						<ul class={ searchResultsUl() }>
 							for _, result := range results {
-								<li class={ searchResultLi() }>
+								<li class={ standardLi() }>
 									<span class={ text() }>-> { result.Title }</span>
 									<a href={ templ.URL(result.Url) } target="_blank">
 										<button class={ standardButton() }>View Article On Wikipedia</button>
 									</a>
 									<a href={ templ.URL("/scrape_wikipedia?url=" + result.Url) }>
-										<button class={ standardButton() }>Add to Reference</button>
+										<button class={ addReferenceButton() }>Add to Reference</button>
 									</a>
 								</li>
 						}
@@ -183,10 +209,13 @@ templ searchResults(query string, results []scraper.WikiQueryResult) {
 templ pageList(pages []scraper.WikiPage) {
 	<ul class={ standardUl() }>
 		for _, page := range pages[1:] {
-			<li class={ searchResultLi() }>
+			<li class={ standardLi() }>
 				<span class={ text() }>-> { page.Title }</span>
 				<a class={ standardA() } href={ templ.URL("wiki_page_json/" + page.Title) }>
 					<button class={ standardButton() }>View Topic</button>
+				</a>
+				<a class={ standardA() } href={ templ.URL("delete_wiki_page/" + page.Title) }>
+					<button class={ deleteButton() }>Delete Topic</button>
 				</a>
 			</li>
 		}
