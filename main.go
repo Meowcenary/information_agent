@@ -97,7 +97,7 @@ func (ph PagesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 // Page Component Building
 
 func FormatPageHtml(wikipage scraper.WikiPage) string {
-	html := "<html><body><h1>" + wikipage.Title + "</h1>"
+	html := "<html><body><h1>" + wikipage.Title + "</h1><hr></hr>"
 	for _, paragraph := range wikipage.Paragraphs {
 		html += "<p>" + paragraph.Text + "</p>"
 	}

@@ -34,7 +34,7 @@ templ headerTemplate() {
 
 templ footerTemplate() {
 	<footer>
-		<div>Information Agent Prototype &copy; { fmt.Sprintf("%d", time.Now().Year()) }</div>
+		<div>Applied Statistics Method Reference &copy; { fmt.Sprintf("%d", time.Now().Year()) }</div>
 	</footer>
 }
 
@@ -67,7 +67,8 @@ templ page(content templ.Component) {
 	<html>
 		@headerTemplate()
 		<body class={ body() }>
-			<a class={ standardA() } href="/"><font size="5">Home</font></a>
+			<a class={ standardA() } href="/"><font size="5">-> Home</font></a>
+			<hr></hr>
 			{! content }
 			<hr></hr>
 			@footerTemplate()
