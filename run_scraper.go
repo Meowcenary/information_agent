@@ -12,6 +12,8 @@ func main() {
 	urls := []string{
 		"https://en.wikipedia.org/wiki/Bootstrapping_(statistics)",
 		"https://en.wikipedia.org/wiki/Cross-validation_(statistics)",
+		"https://en.wikipedia.org/wiki/Sampling_(statistics)",
+		"https://en.wikipedia.org/wiki/Resampling_(statistics)",
 	}
 	dataDir := "wiki_page_json"
 	pages := scraper.ScrapeWikiUrls(urls)

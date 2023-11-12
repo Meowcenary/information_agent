@@ -45,13 +45,13 @@ func FilenameFromTitle(title string) string {
 	return title + ".json"
 }
 
-// func (wp WikiPage) FilenameFromTitle() string {
-// 	title := strings.ToLower(wp.Title)
-// 	replacer := strings.NewReplacer(" ", "_", "(", "",  ")", "", "-", "")
-// 	title = replacer.Replace(title)
-//
-// 	return title + ".json"
-// }
+func (wp WikiPage) FilenameFromTitle() string {
+	title := strings.ToLower(wp.Title)
+	replacer := strings.NewReplacer(" ", "_", "(", "",  ")", "", "-", "")
+	title = replacer.Replace(title)
+
+	return title + ".json"
+}
 
 // Read json created from scraper
 // Returns pointer to WikiPage because using a WikiPage struct directly does not allow for a nil
