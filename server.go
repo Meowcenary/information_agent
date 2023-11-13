@@ -79,7 +79,7 @@ func (hh HomeHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	pages, err := getPages("wiki_page_json")
 
 	if err != nil {
-		hh.Log.Println("failed to get pages: %v", err)
+		hh.Log.Printf("failed to get pages: %v\n", err)
 		return
 	}
 
@@ -132,7 +132,7 @@ func SearchPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	var query string
 	if r.Form.Has("search") {
-		query = r.Form["search"][0]
+		query = strings.ReplaceAll(r.Form["search"][0], " ", "_")
 		logger.Println("searching wikipedia with query: ", query)
 		queryResults = scraper.SearchWikipedia(query)
 	}

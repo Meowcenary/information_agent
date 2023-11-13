@@ -25,14 +25,12 @@ make run
 
 Once the server is running navigate to http:/localhost:8000/home to see the list of scraped pages. Click "View Topic" to
 view the scraped data formatted for local viewing. Click "Delete Topic" to remove a page from the system. On the top nav
-bar click "Search" and run a simple search for: "Statz" to see a list of articles that could be scraped from Wikipedia.
+bar click "Search" and run a simple search for: "query tests" to see a list of articles that could be scraped from Wikipedia.
 The button "View Article on Wikipedia" will open a new tab to the article on Wikipedia and the button "Add to Reference"
 will scrape the page and add the link to the home page list.
 
 ### Running the Tests
-To run the full test suite, from the root directory: `make test`
-
-The tests for the scraper package can be run on their own with: `go test ./`
+To run the full test suite run the following from the root directory: `make test`
 
 ### Updating Views
 This project uses the Go package "templ" to build it's views. Most of the view code is in `components.templ`, but it is

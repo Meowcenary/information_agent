@@ -8,6 +8,13 @@ build: server.go components_templ.go
 clean:
 	-rm server
 
+test:
+	$(GOPATH)/bin/templ generate
+	-rm server
+	go build -o server server.go components_templ.go
+	go test ./scraper
+	go test server.go components_templ.go server_test.go
+
 clean_wiki_pages:
 	-rm -f wiki_page_json/*
 	# recreate .gitignore
